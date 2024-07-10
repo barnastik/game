@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Котик играет с котиками!</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        margin: 0;
+        padding: 0;
+        cursor: url("paw.png"), auto; /* Добавляем стиль для установки курсора на всё тело документа */
+	background-image: url("image.png"); /* Добавляем фоновое изображение для body */
+        background-size: cover; /* Растягиваем изображение на весь размер */
+    }
+    #gameArea {
+        position: relative;
+        width: 1000px;
+        height: 500px;
+        border: 2px solid black;
+        margin: 0 auto;
+        /* Добавляем фоновое изображение */
+        background-image: url("bg.png");
+        background-size: cover; /* Растягиваем изображение на весь размер */
+    }
+    .cat {
+        width: 150px;
+        height: 150px;
+        position: absolute;
+        cursor: pointer;
+    }
+</style>
+</head>
+<body>
+<h1>Котик играет с котиками!</h1>
+<p>Нажмите на котика, чтобы заработать очки!</p>
+<p>Ваш счет: <span id="score">0</span></p>
+<div id="gameArea"></div>
+<button id="restartButton">Перезапустить игру</button>
+<script>
+    const gameArea = document.getElementById('gameArea');
+    const scoreDisplay = document.getElementById('score');
+    const restartButton = document.getElementById('restartButton');
+    let score = 0;
+    let missedCats = 0;
+    let gameInterval;
+
+    const catImages = [
+        'cat1.png',
+        'cat2.png',
+        'cat3.png',
+	'cat4.png',
+        'cat5.png'
+
+        // Добавьте здесь другие URL-адреса изображений PNG котиков
+    ];
+
+    function getRandomPosition() {
+        const x = Math.floor(Math.random() * (gameArea.offsetWidth - 150));
+        const y = Math.floor(Math.random() * (gameArea.offsetHeight - 150));
+        return { x, y };
+    }
+
+    function createCat() {
+        const cat = document.createElement('img');
+        cat.classList.add('cat'); // Добавляем класс "cat" к элементу img
+        const randomIndex = Math.floor(Math.random() * catImages.length);
+        cat.src = catImages[randomIndex];
+        const position = getRandomPosition();
+        cat.style.left = position.x + 'px';
+        cat.style.top = position.y + 'px';
+        cat.addEventListener('click', () => {
+            score++;
+            scoreDisplay.textContent = score;
+            gameArea.removeChild(cat);
+        });
+        gameArea.appendChild(cat);
+        setTimeout(() => {
+            gameArea.removeChild(cat);
+            missedCats++;
+            if (missedCats >= 5) {
+                alert('Игра завершена! Вы пропустили слишком много котиков.');
+                clearInterval(gameInterval);
+            }
+        }, 1000);
+    }
+
+    function restartGame() {
+        score = 0;
+        missedCats = 0;
+        scoreDisplay.textContent = score;
+        clearInterval(gameInterval);
+        gameInterval = setInterval(createCat, 1000);
+    }
+
+    restartButton.addEventListener('click', restartGame);
+
+    // Начало игры
+    gameInterval = setInterval(createCat, 1000);
+</script>
+</body>
+</html>
